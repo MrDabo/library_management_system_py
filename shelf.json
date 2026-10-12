@@ -1,0 +1,16 @@
+{
+    "hello": {
+        "id": 1,
+        "title": "Im the best",
+        "aurthor": "Mr_Dabo 6",
+        "copies": 1,
+        "available_copies": 1
+    },
+    "hello1": {
+        "id": 2,
+        "title": "Im the gratest",
+        "aurthor": "Mr_Dabo^6",
+        "copies": 1,
+        "available_copies": 1
+    }
+}
