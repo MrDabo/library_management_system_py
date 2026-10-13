@@ -2,87 +2,103 @@ import sys
 from threading import Thread
 import json
 from book import Book
+import random
+from utils import *
+import os
 
-shlef_path = 'shelf.json'
+# TO DO LIST
+# Add date
+
+SHELF_PATH = 'shelf.json'
 shelf = []
 
 def getbooks(path):
-    with open(path, 'r') as shelf_file:
-        books = json.load(shelf_file)
-        for book in books:
-            book_deatils = books[book]
-            shelf.append(Book(book_deatils['id'], book_deatils['title'], book_deatils['aurthor'],book_deatils['copies'], book_deatils['available_copies']))
-   
+        if os.path.exists(SHELF_PATH):
+            with open(path, 'r') as shelf_file:
 
-getting_books = Thread(target=getbooks, args=(shlef_path,))
+                books = json.load(shelf_file)
+                shelf.clear()
+                for book in books:
+                    book_deatils = books[book]
+                    
+                    shelf.append(Book(book_deatils['id'], book_deatils['title'], book_deatils['author'],book_deatils['copies'], book_deatils['available_copies']))
+    
+getting_books = Thread(target=getbooks, args=(SHELF_PATH,))
 getting_books.start()
 
 def view_all_books():
-    print('available books\n'.title())
-    getting_books.join()
-    view_books(shelf)
+        print('available books'.title())
+        shelf = []
+        with open(SHELF_PATH, 'r') as shelf_file:
+            books = json.load(shelf_file)   
+            for book in books:
+                book_details = books[book]
+                shelf.append(Book(book_details['id'], book_details['title'], book_details['author'], book_details['copies'], book_details['available_copies']))
+        display_books(shelf) if len(shelf) > 1 else print('Émpty')
+        return_prompt()
     
 
-def view_books(shelf):
+def display_books(shelf):
     print()
     for book in shelf:
         print(f'ID: {book.id}', )
         print(f'Title: {book.title.title()}', )
-        print(f'Aurthor: {book.aurthor.title()}', )
+        print(f'Aurthor: {book.author.title()}', )
         print()
 
 def search_book():
-    search_phrase = str_input('Enter book title or aurthor')
-    getting_books.join()
+    search_phrase = str_input('Enter book Title or Aurthor')
     search_shelf = []
-    for book in shelf: 
-        if book.title.lower() == search_phrase.lower() or book.aurthor.lower() == search_phrase.lower():
-            search_shelf.append(book)
-    if not len(search_phrase):
-        print('Book not found')
-    else: 
-        view_books(search_shelf)
+    with open(SHELF_PATH, 'r') as shelf_file:
+        books = json.load(shelf_file)
+        for book in books: 
+            book_details = books[book]
+            if book_details['title'] == search_phrase.lower() or book_details['author'] == search_phrase.lower():
+                shelf.append(Book(book_details['id'], book_details['title'], book_details['author'], book_details['copies'], book_details['available_copies']))
+        if not len(search_shelf):
+            print('Book not found')
+        else: 
+            display_books(search_shelf)
+        return_prompt()
 
 def add_book():
-    book_title = str_input('Enter book title')
-    book_aurthor = str_input('Enter book aurthor')
+    book_title = str_input('Enter book title').lower().strip()
+    book_author = str_input('Enter book aurthor').lower().strip()
     exists = False
-    for book in shelf:
-        if book.aurthor.lower() == book.aurthor.lower() and book.title.lower() == book_title.lower():
-            exists = True
-    if not exists: 
-       pass
-    else:
-        pass
-
-def int_input(prompt, start, end):
-    while True: 
-        input_value = input(f'{prompt}: ')
-        if not input_value.isdigit():
-            print('Please enter only numeric characters')
+    shelf = []
+    with open(SHELF_PATH, 'r') as shelf_file:
+        books = json.load(shelf_file)
+        for book in books:
+            book_details = books[book]
+            if book_details['title'] == book_title.lower() and book_details['author'] == book_title.lower():
+                exists = True
+            shelf.append(Book(book_details['id'], book_details['title'], book_details['author'], book_details['copies'], book_details['available_copies']))
+    with open(SHELF_PATH, 'w') as shelf_file:
+        shelf_dict = {}
+        if not exists:
+            for book in shelf:
+                shelf_dict.update({ book.id: book.get_dict()})
+            while True:
+                id = generate_id('b',5)
+                if not shelf_dict.get(id): break
+            shelf_dict.update({id : Book.create_dict(id=id, title=book_title, author=book_author)})  
         else:
-            input_value = int(input_value)
-        if not start <= input_value <= end:
-            print(f'Please enter a value between {start} and {end}')
-        else:
-            break
-    return input_value
+            for book in shelf:
+                if book.author == book_author.lower() and book.title == book_title.lower():
+                    book.copies += 1
+                shelf_dict.update({ book.id: book.get_dict()})
+        json.dump(shelf_dict, shelf_file, indent=5)
 
-def str_input(prompt): 
-    while True:
-        input_value = input(f'{prompt}: ')
-        if not input_value:
-            print(f'Please {prompt.lower()}')
-        else: break
-    return input_value
-    
+def register_member():
+    first_name = str_input('Enter your first name')
+    last_name = str_input('Enter your last name')
 
 def main():
     print('='*30)
     print('Libarary management system'.upper().center(30,' '))
     print('='*30)
-    print('\n1. View all books\n2. Search for a book\n3. Add a new book\n4. Register a member\n5. Borrow a book\n6. Return a book\n7. View borrowing records\n8. View overdue books\n9. Exit\n')
     while True :
+        print('1. View all books\n2. Search for a book\n3. Add a new book\n4. Register a member\n5. Borrow a book\n6. Return a book\n7. View borrowing records\n8. View overdue books\n9. Exit\n')
         choice = int_input('Enter your choice',1,10)
         match choice:
             case 1:
@@ -91,9 +107,8 @@ def main():
                 search_book()
             case 3:
                 add_book()
-                pass
             case 4:
-                pass
+                register_member()
             case 5:
                 pass
             case 6:

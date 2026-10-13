@@ -1,16 +1,37 @@
 {
-    "hello": {
-        "id": 1,
-        "title": "Im the best",
-        "aurthor": "Mr_Dabo 6",
-        "copies": 1,
-        "available_copies": 1
-    },
-    "hello1": {
-        "id": 2,
-        "title": "Im the gratest",
-        "aurthor": "Mr_Dabo^6",
-        "copies": 1,
-        "available_copies": 1
-    }
+     "BmPTt": {
+          "id": "BmPTt",
+          "title": "Crime and punishment",
+          "author": "dutskieviske",
+          "copies": 0,
+          "available_copies": 0
+     },
+     "BzxPH": {
+          "id": "BzxPH",
+          "title": "odyssy",
+          "author": "homer",
+          "copies": 0,
+          "available_copies": 0
+     },
+     "BlOw9": {
+          "id": "BlOw9",
+          "title": "love",
+          "author": "me",
+          "copies": 0,
+          "available_copies": 0
+     },
+     "B90Kx": {
+          "id": "B90Kx",
+          "title": "dd",
+          "author": "ddd",
+          "copies": 0,
+          "available_copies": 0
+     },
+     "BXdrS": {
+          "id": "BXdrS",
+          "title": "ss",
+          "author": "ss",
+          "copies": 0,
+          "available_copies": 0
+     }
 }
